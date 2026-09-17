@@ -1,4 +1,1 @@
-version 1
-ajout feature 1
-ajout feature 2
-correctif main
+version initiale
