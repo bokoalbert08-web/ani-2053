@@ -7,4 +7,4 @@ ligne 6
 ligne 7
 ligne 8
 ligne 9
-ligne 10
+fin modifiee par clone1
