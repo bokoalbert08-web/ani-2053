@@ -1,28 +1,35 @@
-#include "NKWindow/NKWindow.h"
-#include "NKWindow/NKMain.h"
-#include <iostream>
+#include "NKWindow/Core/NkMain.h"
+#include "NKWindow/Core/NkWindow.h"
+#include <windows.h>
+#include <cstdio>
 
 using namespace nkentseu;
 
 int nkmain(const NkEntryState &state) {
+    // Console de debogage pour afficher les resultats (utile car ceci est une
+    // application fenetree Windows : sans elle, std::cout ne s'affiche nulle part).
+    AllocConsole();
+    FILE* dummy;
+    freopen_s(&dummy, "CONOUT$", "w", stdout);
+
     NkWindowConfig cfg;
     cfg.title  = "Facteur d'echelle";
     cfg.width  = 1280;
     cfg.height = 720;
 
-    NkWindow window(cfg);
+    Window window(cfg);
     if (!window.IsOpen()) {
-        logger.Error("[app] creation fenetre echouee");
+        printf("[app] creation fenetre echouee\n");
         return -1;
     }
 
-    math::NkVec2u windowSize = window.GetSize();
-    NkSurfaceDesc surface    = window.GetSurfaceDesc();
-    float32 scale            = window.GetDpiScale();
+    NkVec2u windowSize    = window.GetSize();
+    NkSurfaceDesc surface = window.GetSurfaceDesc();
+    float scale           = window.GetDpiScale();
 
-    std::cout << "Taille fenetre     : " << windowSize.x << " x " << windowSize.y << std::endl;
-    std::cout << "Taille cible rendu : " << surface.width << " x " << surface.height << std::endl;
-    std::cout << "Facteur d'echelle  : " << scale << std::endl;
+    printf("Taille fenetre     : %u x %u\n", windowSize.x, windowSize.y);
+    printf("Taille cible rendu : %u x %u\n", surface.width, surface.height);
+    printf("Facteur d'echelle  : %.2f\n", scale);
 
     while (window.IsOpen()) {}
     return 0;

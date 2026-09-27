@@ -7,55 +7,74 @@ Afficher côte à côte trois valeurs : la taille rendue par la fenêtre, la tai
 ## Code
 
 ```cpp
-#include "NKWindow/NKWindow.h"
-#include "NKWindow/NKMain.h"
-#include <iostream>
+#include "NKWindow/Core/NkMain.h"
+#include "NKWindow/Core/NkWindow.h"
+#include <windows.h>
+#include <cstdio>
 
 using namespace nkentseu;
 
 int nkmain(const NkEntryState &state) {
+    // Console de debogage pour afficher les resultats (utile car ceci est une
+    // application fenetree Windows : sans elle, printf ne s'affiche nulle part).
+    AllocConsole();
+    FILE* dummy;
+    freopen_s(&dummy, "CONOUT$", "w", stdout);
+
     NkWindowConfig cfg;
     cfg.title  = "Facteur d'echelle";
     cfg.width  = 1280;
     cfg.height = 720;
 
-    NkWindow window(cfg);
+    Window window(cfg);
     if (!window.IsOpen()) {
-        logger.Error("[app] creation fenetre echouee");
+        printf("[app] creation fenetre echouee\n");
         return -1;
     }
 
-    math::NkVec2u windowSize = window.GetSize();
-    NkSurfaceDesc surface    = window.GetSurfaceDesc();
-    float32 scale            = window.GetDpiScale();
+    NkVec2u windowSize    = window.GetSize();
+    NkSurfaceDesc surface = window.GetSurfaceDesc();
+    float scale           = window.GetDpiScale();
 
-    std::cout << "Taille fenetre     : " << windowSize.x << " x " << windowSize.y << std::endl;
-    std::cout << "Taille cible rendu : " << surface.width << " x " << surface.height << std::endl;
-    std::cout << "Facteur d'echelle  : " << scale << std::endl;
+    printf("Taille fenetre     : %u x %u\n", windowSize.x, windowSize.y);
+    printf("Taille cible rendu : %u x %u\n", surface.width, surface.height);
+    printf("Facteur d'echelle  : %.2f\n", scale);
 
     while (window.IsOpen()) {}
     return 0;
 }
 ```
 
+## Résultat obtenu à l'exécution
+
+```
+Taille fenetre     : 1281 x 721
+Taille cible rendu : 1281 x 721
+Facteur d'echelle  : 1.25
+```
+
+L'écran de test a un facteur d'échelle de 1.25 (125%), ce qui confirme la mise en garde du chapitre sur la différence entre pixels logiques et pixels physiques. La légère différence entre la taille demandée (1280x720) et la taille obtenue (1281x721) vient de la manière dont la bibliothèque calcule la zone cliente incluant la bordure.
+
 ## Méthodes utilisées et leur origine
 
-Ces méthodes ont été retrouvées directement dans le header `NkWindow.h` de la bibliothèque (classe `nkentseu::NkWindow`), le chapitre ne les détaillant pas explicitement :
+Ces méthodes ont été retrouvées directement dans le header `NkWindow.h` de la bibliothèque (classe `Window`, dans le namespace `nkentseu`), le chapitre ne les détaillant pas explicitement :
 
 | Méthode | Rôle |
 |---|---|
-| `window.GetSize()` | Renvoie la taille de la **fenêtre** (`math::NkVec2u`, champs `.x` / `.y`) |
+| `window.GetSize()` | Renvoie la taille de la **fenêtre** (`NkVec2u`, champs `.x` / `.y`) |
 | `window.GetSurfaceDesc()` | Renvoie le descripteur de la **cible de rendu** (`NkSurfaceDesc`, champs `.width` / `.height`) |
-| `window.GetDpiScale()` | Renvoie le **facteur d'échelle** de l'écran (`float32`) |
+| `window.GetDpiScale()` | Renvoie le **facteur d'échelle** de l'écran (`float`) |
 
-Un `using namespace nkentseu;` a été ajouté après les includes : tous les types de la bibliothèque (`NkWindow`, `NkWindowConfig`, `NkSurfaceDesc`, `NkEntryState`, `float32`, `math::NkVec2u`) sont déclarés dans ce namespace, sans alias global vers la racine.
+Un `using namespace nkentseu;` a été ajouté après les includes pour éviter de préfixer chaque type.
 
-## Remarque sur la compilation locale
+## Difficultés de compilation rencontrées et corrections apportées
 
-Je n'ai pas pu obtenir de compilation réussie sur ma machine, malgré plusieurs tentatives :
+La compilation ne fonctionnait initialement pour aucun exercice du chapitre (y compris l'exercice 1), à cause de plusieurs bugs indépendants du code de l'exercice, présents dans le matériel du cours (dossier `NKWindow` fourni avec l'exemple Jenga) :
 
-- En liant les headers de NKWindow directement avec `g++` (sans passer par Jenga), l'édition de liens échoue systématiquement (`ld returned 1` ou `5`), car aucune implémentation compilée de la bibliothèque n'est disponible de cette façon — seuls des en-têtes étaient inclus.
-- En essayant de builder via l'outil `Jenga` avec la copie de NKWindow fournie dans l'exemple `27_nk_window`, la compilation de la bibliothèque elle-même échoue avec 17 erreurs, dans son propre code (`NkWin32WindowImpl.cpp`, `NkWin32EventImpl.h`) : plusieurs méthodes (`Front()`, `PushEvent()`, `DispatchEvent()`) sont déclarées `override` avec une signature différente de celle de la classe de base `IEventImpl` (type de retour ou type de paramètre incompatible) — donc indépendant de mon code.
-- En remplaçant cette copie par celle du dépôt `Nkentseu` (`Kernel/Runtime/NKWindow`), de nouvelles erreurs de chemins d'inclusion manquants (`NKMath`, `NKPlatform`) sont apparues, la configuration `.jenga` de l'exemple ne prévoyant pas ces dépendances.
+1. **Trois signatures incompatibles** entre l'interface `IEventImpl` et son implémentation Win32 (`NkWin32EventImpl`) : `Front()`, `PushEvent()` et `DispatchEvent()` utilisaient des types différents (référence au lieu de pointeur, valeur au lieu de `unique_ptr`). Corrigé en alignant l'implémentation sur l'interface.
+2. **Une faute de frappe** dans un chemin d'include (`NKPatform` au lieu de `NKPlatform`) dans `NkEntry.h`.
+3. **Un chemin d'include incorrect** pour le même fichier une fois la faute corrigée (le dossier `NKPlatform` n'existe pas dans cette copie de la bibliothèque ; le fichier `NkPlatformDetect.h` est directement dans `Core/`).
+4. **Une erreur de structure dans le fichier de configuration Jenga** (`27_nk_window.jenga`) : les appels `configure_sandbox_app(...)` qui déclarent les projets d'exercice (dont celui-ci) étaient indentés à l'intérieur du corps de la fonction censée les recevoir, donc jamais exécutés.
+5. **Une DLL manquante** : la bibliothèque lie `XInput` (support manette) via `XINPUT1_3.dll`, absente de mon système (seules des versions plus récentes comme `XInput1_4.dll` sont présentes). Contournement : génération d'une bibliothèque d'import (`libxinput.a`) via `dlltool` pointant vers `XInput1_4.dll`, avec uniquement les 3 fonctions utilisées par le code (`XInputGetState`, `XInputSetState`, `XInputGetBatteryInformation`).
 
-Le code ci-dessus est donc rédigé à partir des signatures réelles trouvées dans les en-têtes de la bibliothèque (confirmées via recherche dans le code source), mais n'a pas pu être validé par une compilation complète de bout en bout de mon côté.
+Aucune de ces corrections ne touche à la logique de l'exercice lui-même — elles réparent uniquement l'environnement de compilation fourni.
