@@ -1,4 +1,4 @@
-# Exercice — Deux fenêtres
+# Exercice — deux fenêtres
 
 ## Objectif
 
