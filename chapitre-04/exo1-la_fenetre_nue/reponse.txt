@@ -1,0 +1,8 @@
+Ce que la coquille fait a ma place :
+Elle cree la fenetre et la cible de rendu, choisit le moteur graphique, tient la boucle (temps ecoule, evenements, mise a jour, dessin) et gere la fermeture. Je l'ai vu dans la console : sans que j'ecrive rien de tel, elle annonce "backend par defaut de la plateforme = DirectX 11", puis cree le contexte DirectX 11 et le moteur de rendu 2D, et ouvre la fenetre "Fenetre nue". Je n'ecris que ma classe, avec sa configuration dans le constructeur, et nkmain.
+
+Ce qui se passe si je configure dans OnInit :
+Aucune erreur : le programme compile et se lance. Mais le resultat est a moitie faux. J'ai mis dans OnInit le titre "Test OnInit", une taille de 600x400 et un fond rouge. Observe : la console a affiche le titre par defaut "Application NKCanvas", la fenetre avait la meme taille que la fenetre normale et non 600x400, mais le fond etait bien rouge. Je n'ai vu aucun message d'erreur ni d'avertissement. La cause du titre et de la taille : la configuration est lue une seule fois, avant la creation de la fenetre ; quand OnInit est appelee, la fenetre existe deja. Pour la couleur, mon hypothese (non verifiee, je n'ai pas le code de la coquille) est qu'elle est relue a chaque image au moment d'effacer l'ecran. Le piege est donc que certains reglages marchent et d'autres non, sans aucun signal.
+
+Ce qui se passe sans NKMain.h :
+Le fichier compile, mais l'edition de liens echoue : "undefined reference to `WinMain'", puis "clang++: error: linker command failed with exit code 1", et le build est marque Build Failed. Je n'ai jamais ecrit de WinMain. La cause : NKMain.h apporte le vrai point d'entree de Windows, WinMain, qui appelle mon nkmain. Sans cet include, personne ne definit WinMain et il n'y a pas d'executable.
