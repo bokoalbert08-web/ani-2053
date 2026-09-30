@@ -22,7 +22,11 @@ int main() {
     long long sy = 0;
     long long angle = 0;
 
-    for (int i = 0; i < n && std::cin >> nom >> w >> h >> px >> py >> ox >> oy >> sx >> sy >> angle; ++i) {
+    for (int i = 0; i < n; ++i) {
+        if (!(std::cin >> nom >> w >> h >> px >> py >> ox >> oy >> sx >> sy >> angle)) {
+            break;
+        }
+
         if (angle % 90 != 0) {
             std::cout << nom << " ANGLE REFUSE\n";
             ++refuses;
@@ -51,8 +55,11 @@ int main() {
         }
         std::cout << '\n';
 
-        std::cout << nom << " BOITE " << *std::min_element(x, x + 4) << ' ' << *std::min_element(y, y + 4)
-                  << ' ' << *std::max_element(x, x + 4) << ' ' << *std::max_element(y, y + 4) << '\n';
+        const long long minx = *std::min_element(x, x + 4);
+        const long long miny = *std::min_element(y, y + 4);
+        const long long maxx = *std::max_element(x, x + 4);
+        const long long maxy = *std::max_element(y, y + 4);
+        std::cout << nom << " BOITE " << minx << ' ' << miny << ' ' << maxx << ' ' << maxy << '\n';
     }
 
     std::cout << "REFUSES " << refuses << '\n';
