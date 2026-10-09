@@ -1,0 +1,5 @@
+image : icone.png, calcul : 1048576, mesure : 1056768, fichier : 7753
+image : capture.png, calcul : 3686400, mesure : 4284416, fichier : 270286
+image : dessin.png, calcul : 40416408, mesure : 39919616, fichier : 107197
+image : photo1.jpg, calcul : 2764800, mesure : 2785280, fichier : 112702
+image : photo2.jpg, calcul : 50331648, mesure : 50438144, fichier : 6108855
