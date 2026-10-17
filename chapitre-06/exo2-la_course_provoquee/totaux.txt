@@ -1,0 +1,17 @@
+Dix totaux : (Debug, huit fils, un million d'incréments chacun, total attendu 8000000, un total par ligne)
+2012155
+1681346
+2187685
+2375923
+1870897
+1150049
+2226137
+2235239
+2345547
+1648969
+
+Un seul fil : 1000000 en Debug, exactement le total attendu, aucune perte.
+
+Release : avec l'optimisation activée, trois lancements ont donné 8000000, 8000000 et 8000000, et trente lancements sur trente ont donné 8000000. Un premier essai en Release sans optimisation (compilation identique à Debug) donnait des totaux faux : 1972748, 2232453 et 2187340.
+
+Pourquoi : compteur += 1 n'est pas une seule opération. Le processeur lit compteur en mémoire dans un registre, ajoute 1 dans le registre, puis réécrit le résultat en mémoire : trois étapes séparées (mov, add $0x1, mov dans le code machine en Debug). Quand deux fils font cela en même temps, ils peuvent lire la même valeur, par exemple 100 ; chacun calcule 101 et l'écrit : le compteur vaut 101 au lieu de 102, et un incrément est perdu. Un fil peut aussi être interrompu entre sa lecture et son écriture ; quand il reprend, il écrit une valeur périmée par-dessus le travail des autres. Avec huit fils et huit millions d'incréments, cela arrive des millions de fois : entre 70 % et 86 % des incréments sont perdus, et le total change à chaque exécution, car il dépend du moment exact où chaque fil est interrompu. Avec un seul fil, personne ne s'intercale : le total est exact. En Release, le compilateur voit que la boucle ajoute 1 un million de fois à la même variable et la remplace par une seule instruction qui ajoute 1000000 d'un coup (addq $0xf4240 sur compteur dans le code machine). Chaque fil ne touche donc le compteur qu'une seule fois, pendant un temps très court, alors que créer un fil prend bien plus longtemps : les fils se chevauchent presque jamais sur cette instruction, et le total sort juste. La course n'a pas disparu, elle est seulement cachée : l'instruction n'est pas atomique (elle n'a pas de préfixe lock), et un total juste, même trente fois de suite, ne prouve pas que le code est correct. Pour le garantir, il faudrait un verrou ou un compteur atomique.
