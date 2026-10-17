@@ -14,15 +14,20 @@ using namespace nkentseu::threading;
 static const int kTaches = 200;
 static const int kRepetitions = 3;
 
-// La tâche : additionner `n` entiers dans une variable locale.
-// Le résultat est rangé dans une case propre à la tâche : personne ne
-// l'écrase, et le compilateur ne peut pas retirer le calcul.
+// La tâche : n tours d'un petit mélange de bits (xorshift), dont on additionne
+// les résultats dans une variable locale. Chaque tour dépend du précédent :
+// le compilateur ne peut pas remplacer la boucle par une formule.
+// Le résultat est rangé dans une case propre à la tâche et affiché.
 static void Tache(long long* sortie, int n)
 {
+    unsigned long long x = 88172645463325252ULL;
     long long somme = 0;
-    for (int i = 1; i <= n; ++i)
+    for (int i = 0; i < n; ++i)
     {
-        somme += i;
+        x ^= x << 13;
+        x ^= x >> 7;
+        x ^= x << 17;
+        somme += (long long)(x & 0xFFFF);
     }
     *sortie = somme;
 }
