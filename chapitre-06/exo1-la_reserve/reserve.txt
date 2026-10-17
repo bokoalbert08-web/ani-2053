@@ -1,0 +1,11 @@
+Tâche : additionner les entiers de 1 à 1000 dans une variable locale, rangée ensuite dans une case propre à la tâche et affichée (la somme des deux cents tâches vaut 100100000), pour que le compilateur ne retire pas le calcul en Release. Deux cents tâches identiques dans les deux versions.
+
+Réserve : 0.180 ms, 0.172 ms, 0.173 ms (NkThreadPool, deux cents Enqueue puis un seul Join, Release)
+
+Fils : 7.503 ms, 8.295 ms, 8.098 ms (deux cents NkThread créés à la main, puis Join sur chacun, Release)
+
+Ouvriers : 4 (valeur donnée par GetNumWorkers)
+
+Tâche longue : réserve 15.090 ms, fils 17.758 ms (même tâche rendue cent fois plus longue, soit cent mille entiers ; médiane de trois mesures pour chaque version)
+
+Pourquoi : créer un fil coûte cher : le système doit réserver une pile, inscrire le fil dans l'ordonnanceur, le démarrer, puis le détruire quand on le joint. Avec la tâche courte, ce coût est bien plus grand que le travail lui-même (additionner mille entiers prend moins d'une microseconde) : les deux cents fils passent leur temps à naître et à mourir, et la version fils (environ 8 ms) est environ 45 fois plus lente que la réserve (environ 0.175 ms), soit à peu près 40 microsecondes par fil créé. La réserve paie ce coût une seule fois, pour ses 4 ouvriers déjà là, puis ne fait que distribuer les deux cents tâches. Avec la tâche longue, le calcul dure cent fois plus et domine : le coût fixe de création de deux cents fils devient une petite part du total, et l'écart tombe à environ 18 % (15 ms contre 17.8 ms). Le travail est alors limité par le nombre de cœurs et non plus par la création des fils. La réserve compte donc surtout pour du travail court et nombreux ; pour du travail long, créer ses fils coûte peu en proportion.
