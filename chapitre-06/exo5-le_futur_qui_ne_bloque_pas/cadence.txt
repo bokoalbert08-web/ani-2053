@@ -1,0 +1,7 @@
+Image : 1254 x 1254 pixels, fichier de 2151046 octets (environ 2,1 Mo). Chargement mesuré dans la tâche : 45.070 ms dans la version Get, 40.404 ms dans la version IsReady.
+
+Get : trame la plus longue 45.942 ms, 0 trame dessinée pendant le chargement.
+
+IsReady : trame la plus longue 17.959 ms, 2 trames dessinées pendant le chargement.
+
+Ce qu'on voit : dans la version Get, l'appel à futur.Get() bloque la boucle de la fenêtre : tant que l'image n'est pas là, la boucle ne dessine rien. La trame la plus longue (45.942 ms) est presque exactement la durée du chargement (45.070 ms), et zéro trame est dessinée pendant ce temps. Le carré, qui avance d'un pixel par trame, s'immobilise donc pendant environ 46 ms, soit près de trois trames d'un affichage à 60 images par seconde, puis repart : c'est un gel. Dans la version IsReady, le chargement tourne dans un autre fil et la boucle demande seulement à chaque trame si le résultat est prêt : tant que la réponse est non, elle dessine et le carré avance. La trame la plus longue (17.959 ms) reste proche d'une trame ordinaire (environ 16.7 ms à 60 images par seconde), et deux trames sont dessinées pendant les 40.404 ms du chargement : le carré ne s'arrête pas. Le gel de Get dure aussi longtemps que le chargement : il serait donc bien plus long avec une image plus lourde, alors que la boucle IsReady ne s'arrêterait toujours pas. Les mesures ont été faites en Release, une exécution par version.
