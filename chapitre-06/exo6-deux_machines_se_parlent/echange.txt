@@ -1,0 +1,13 @@
+Serveur :
+[serveur] ecoute sur le port 7777
+[serveur] pair connecte : id 11397873711626437568
+[serveur] message de l'id 11397873711626437568 : bonjour serveur
+
+Client :
+[client] connexion a 127.0.0.1:7777
+[client] pair connecte : id 1
+[client] message envoye "bonjour serveur" (code 0)
+
+Pair : côté serveur, l'identifiant reçu dans onPeerConnected est 11397873711626437568 : il désigne le client qui vient de se connecter. C'est un identifiant unique que le serveur génère pour ce client pendant la session, et c'est le même nombre qui apparaît dans le champ from du message reçu, donc il dit qui a envoyé le message. Côté client, l'identifiant reçu dans onPeerConnected est 1 : il désigne le serveur, et c'est l'identifiant que le client utilise dans SendTo pour lui écrire. La valeur 1 est la convention du kit pour le serveur (0 est invalide). Les deux nombres sont donc différents parce que chaque côté désigne l'autre : le serveur voit le client, le client voit le serveur.
+
+Machines : une seule machine. Le serveur et le client ont tourné sur le même ordinateur, dans deux fenêtres de terminal différentes, avec l'adresse 127.0.0.1 (l'adresse de la machine elle-même) et le port 7777. Je n'ai donc pas testé le passage entre deux machines réelles d'un même réseau local, ni le comportement du pare-feu entre deux machines. Le serveur a été lancé en premier, puis le client ; le client attend d'être connecté avant d'envoyer son message.
