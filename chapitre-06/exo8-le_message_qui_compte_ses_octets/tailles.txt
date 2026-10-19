@@ -1,0 +1,16 @@
+Types complets : 18 octets (144 bits). Chaque champ dans son type entier : état et numéro en WriteU8 (1 octet chacun), x, y et angle en WriteF32 (4 octets chacun), santé en WriteI32 (4 octets), soit 1 + 1 + 4 + 4 + 4 + 4 = 18 octets. Relu par un NkBitReader (ReadU8, ReadF32, ReadI32), il revient identique.
+
+Quantifié : 8 octets (60 bits). État en WriteBool (1 bit), numéro en WriteU8 (8 bits), x et y en WriteF32Q entre -500 et 500 avec une précision de 0.01 (17 bits chacun), angle en WriteF32Q entre 0 et 360 avec une précision de 0.5 (10 bits), santé en WriteInt entre 0 et 100 (7 bits) : 1 + 8 + 17 + 17 + 10 + 7 = 60 bits, soit 8 octets une fois arrondis. Le paquet quantifié est 10 octets plus petit que le complet, soit environ 56 % de moins.
+
+Écart maximal : mesuré en écrivant puis en relisant 200000 états tirés au hasard dans les bornes (générateur congruentiel de graine 12345), avec les mêmes bornes, la même précision et le même ordre à la relecture.
+Paquet quantifié :
+- état (vivant) : 0 erreur sur 200000 états
+- numéro : 0 erreur sur 200000 états
+- x : 0.00549316 mètre
+- y : 0.00872803 mètre
+- angle : 0.49777222 degré
+- santé : 0
+Paquet en types complets : écart de 0 sur tous les champs.
+Les deux paquets ont aussi été envoyés par le réseau (un serveur et un client NKNetwork sur la même machine, par 127.0.0.1, port 7777) et relus par le serveur avec un NkBitReader. Pour l'état d'exemple (x = 123.456, y = -87.654, angle = 271.3, santé 73), le paquet complet est revenu identique et le paquet quantifié est revenu avec x = 123.460, y = -87.650, angle = 271.5 et santé 73, soit des écarts de 0.004 mètre, 0.004 mètre, 0.2 degré et 0.
+
+Ce que le joueur verrait : les écarts mesurés restent sous la précision demandée : moins d'un centimètre pour la position (0.0055 et 0.0087 mètre sur une zone de 1000 mètres de large) et moins d'un demi-degré pour l'angle (0.498). La santé est exacte, car ce sont des entiers de 0 à 100. Dans un jeu, un centimètre est très petit devant un personnage d'environ 1,8 mètre, et à une distance de jeu ordinaire il est de l'ordre d'un pixel (à 10 mètres, avec un écran de 1080 pixels et un champ de vue vertical de 60 degrés, un pixel couvre environ 1 centimètre, c'est un ordre de grandeur que j'ai calculé, pas une mesure) : la position quantifiée ne se verrait pas, et comme chaque paquet porte la valeur absolue, l'erreur ne s'additionne pas d'un paquet à l'autre. Un demi-degré d'orientation ne se voit pas non plus sur un personnage. Il pourrait compter pour une visée très précise : à 10 mètres, un demi-degré déplace le point visé d'environ 9 centimètres, ce qui est du même ordre qu'une tête, donc dans un jeu de tir on pourrait vouloir un angle plus précis, alors que dans un jeu où l'angle sert seulement à orienter un personnage la précision du demi-degré suffit. Le choix de la précision dépend donc de ce que le joueur peut voir ou de ce que le jeu vérifie.
