@@ -1,0 +1,13 @@
+Module : NKAudio
+
+D'après le projet : (écrit d'après la seule ligne KIT_DEPENDS de NKAudio, avant d'ouvrir l'en-tête)
+Il lit les fichiers, il lit les images, il effectue les calculs. Il n'a ni fenêtre ni événement, pas de dessin, pas de réseau, pas d'horloge propre.
+
+Après l'en-tête :
+En-tête ouvert : include/NKAudio/NkAudio.h. Il se présente comme le « header principal du module audio » : c'est donc un moteur de son. Il n'inclut que des fondations (NKCore, NKPlatform, NKContainers, NKMemory). Il annonce les types AudioEngine, IAudioBackend, IAudioEffect, NkAudioBus, AudioSample, AudioHandle, AudioSource3D et AudioListener3D, et fixe des constantes : 48000 Hz, 2 canaux, un buffer de 256 trames, 256 voix, 8 effets par voix, 16 effets sur le bus principal, une FFT de 2048, et la vitesse du son à 343 m/s pour l'effet Doppler. Le module sert donc à jouer et mixer des sons, en 3D, avec des effets. Dans le dossier du module, il y a aussi Streaming (NkAudioStream.h, NkAudioStreamPlayer.h, NkContainerAudioStream.h) et Codecs (FLAC, MP3, OGG, Opus).
+
+Mes erreurs :
+1. La liste de dépendances ne dit nulle part que c'est du son : je n'ai jamais écrit « audio » ni « son » dans mes lignes. Ce que fait vraiment le module (voix, effets, bus de mixage, sons en 3D, formats FLAC, MP3, OGG, Opus) ne se devinait pas d'après les noms des modules.
+2. J'avais écrit « il lit les images ». La dépendance NKImage est bien dans la liste, mais aucun en-tête de NKAudio ne l'inclut : son usage n'apparaît pas dans les en-têtes. Il en va de même pour NKMath, NKStream, NKThreading et NKLogger : ils sont dans la liste, mais aucun en-tête public du module ne les inclut. Une dépendance dit ce que la bibliothèque compilée peut utiliser, pas ce que le module montre dans ses en-têtes. Mes deux idées « images » et « calculs » ne sont donc pas confirmées par les en-têtes, et on ne peut pas dire si elles sont vraies pour le code interne.
+3. « Il lit les fichiers » est vrai, mais en plus précis : NKFileSystem est inclus par Streaming/NkAudioStream.h (flux audio), et NKMedia par Streaming/NkContainerAudioStream.h : le module lit des fichiers audio, y compris à l'intérieur de conteneurs multimédias.
+4. Ce que j'avais bien lu : aucun en-tête du module n'inclut NKWindow, NKEvent, NKCanvas, NKGui, NKFont, NKGlad, NKNetwork ni NKTime. Pas de fenêtre, pas de dessin, pas de réseau et pas d'horloge propre se confirment donc dans les en-têtes (aucun #include de ces modules).
