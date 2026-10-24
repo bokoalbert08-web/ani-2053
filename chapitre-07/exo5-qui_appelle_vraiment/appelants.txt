@@ -1,0 +1,25 @@
+Par le texte : commande lancée depuis le dossier de l'exercice, sur le kit du 13 octobre : grep -rn "\.Draw(\|->Draw(" include/ appelants.cpp. Elle trouve 36 lignes. Sur ces 36, 28 sont des commentaires (des exemples de documentation, comme « // target.Draw(sprite); ») et 8 sont du code :
+- include/NKCanvas/Renderer/Targets/NkRenderTarget.h:112 : drawable.Draw(*this, states);
+- include/NKCanvas/Renderer/Core/NkRenderer2D.h:193 : drawable.Draw(*mTarget, states);
+- include/NKCanvas/Renderer/Core/NkRenderer2D.h:200 : mBackend->Draw(drawable); (ancienne interface NkIDrawable2D)
+- include/NKCanvas/Renderer/Core/NkRenderer2D.h:293 : mBackend->Draw(sprite);
+- include/NKCanvas/Renderer/Core/NkRenderer2D.h:298 : mBackend->Draw(text);
+- include/NKCanvas/Renderer/Core/NkIRenderer2D.h:175 : drawable.Draw(*this); (ancienne interface NkIDrawable2D)
+- appelants.cpp:35 : target.Draw(sommets, 4, NkPrimitiveType::NK_LINES, states);
+- appelants.cpp:56 : target.Draw(mCroix);
+Les autres lignes (NkDrawable.h, NkMaterial.h, NkSprite.h, les formes, etc.) sont des commentaires.
+
+Par la pile : geste : un point d'arrêt dans Croix::Draw (gdb -batch, break Croix::Draw, run, bt), programme construit en Debug. Le programme s'arrête une fois, la ligne 31 de appelants.cpp, première ligne du corps de Draw. Pile au premier arrêt :
+#0 Croix::Draw, appelants.cpp:31
+#1 nkentseu::renderer::NkRenderTarget::Draw (drawable, states), NkRenderTarget.h:112
+#2 AppelantsApp::OnRender, appelants.cpp:56
+#3 nkentseu::renderer::NkCanvasApp::Execute, NkCanvasApp.cpp:223 (le chemin du fichier est D:\Projets\2026\Nkentseu\Kernel\Runtime\NKCanvas\src\NKCanvas\App\NkCanvasApp.cpp : un fichier du moteur que le kit n'a pas)
+#4 nkentseu::renderer::NkCanvasApp::Run<AppelantsApp>, NkCanvasApp.h:204
+#5 nkmain, appelants.cpp:65
+#6 WinMain, NkWindowsDesktop.h:84
+#7 __tmainCRTStartup (sans fichier source)
+#8 KERNEL32!BaseThreadInitThunk (kernel32.dll)
+#9 ntdll!RtlUserThreadStart (ntdll.dll)
+#10 0x0000000000000000 in ?? ()
+
+Les différences : 1) Deux appels se retrouvent dans les deux listes : NkRenderTarget.h:112 (cadre 1) et appelants.cpp:56 (cadre 2). Ce sont les seuls des huit appels trouvés par le texte qui ont réellement eu lieu avant l'arrêt. 2) Le texte appelle « Draw » ce qui est en réalité Croix::Draw : la ligne drawable.Draw(*this, states) de NkRenderTarget.h porte le nom de la classe de base NkDrawable, et le texte ne peut pas dire quelle classe concrète sera appelée. La pile, elle, nomme Croix::Draw au cadre 0 : la méthode est virtuelle, la classe se décide à l'exécution. 3) Vingt-huit des trente-six lignes du texte sont des commentaires, des exemples de documentation : elles ne sont pas des appels et n'apparaissent pas dans la pile. 4) Le texte trouve des appels qui n'ont pas eu lieu dans cette exécution : NkRenderer2D.h:193 appelle la même virtuelle NkDrawable::Draw, mais par la façade NkRenderer2D, que mon programme n'utilise pas (il passe par la cible, target.Draw) ; NkRenderer2D.h:200, 293 et 298 et NkIRenderer2D.h:175 concernent l'ancienne interface NkIDrawable2D, dont le Draw est une autre fonction. La pile ne montre que les appels de cette exécution, le texte montre ceux qui sont possibles. 5) appelants.cpp:35, target.Draw(sommets, 4, ...), est trouvé par le texte mais n'est pas dans la pile : c'est l'appel de l'autre virtuelle, Draw(vertices, count, ...), que Croix::Draw fait plus tard, et le point d'arrêt a été pris avant, à la ligne 31. 6) La pile montre ce que le texte ne trouve pas, parce que ce code n'est pas dans include/ : NkCanvasApp::Execute, qui appelle OnRender (cadre 3, dans un fichier .cpp du moteur absent du kit, donc du code de la bibliothèque compilée), le code de démarrage de Windows (cadres 6 à 9, dont __tmainCRTStartup sans source) et un cadre final sans nom. Le texte ne voit que les en-têtes du kit et mon fichier : il ne pouvait pas trouver qui appelle OnRender.
