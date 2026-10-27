@@ -1,0 +1,17 @@
+Question : Reprise : où est décidée la taille d'un bouton dans NKGui ? Début : 2026-10-27 05:24. Fin : 2026-10-27 05:30. Durée réelle : 6 minutes, pas une heure entière.
+Une première tentative avait commencé le 2026-10-26 10:34 sur la question « Dans NKGui : où est décidée la taille d’un bouton ? » ; la fenêtre du terminal a été fermée par accident, aucune note n'a été saisie à ce moment et la recherche n'a repris que le 2026-10-27 05:24. Les premières pistes (les fichiers Widgets et Context de NKGui) ont été lues pendant cette première tentative et notées à la reprise : l'heure inscrite devant une note est celle de sa saisie, pas celle de la lecture.
+
+Les endroits :
+- [2026-10-27 05:26] include/NKGui/Widgets/NkGuiWidgets.h : les deux formes de Button, avec rectangle et sans (rect auto)
+- [2026-10-27 05:26] include/NKGui/Core/NkGuiContext.h : NkGuiLayout, framePadX/framePadY, NextItemRect (déclarée seulement)
+- [2026-10-27 05:26] include/NKGui/Doc/NkGuiInteraction.h : calcul de largeur de libellé avec MeasureWidth + 14, pour un champ de saisie
+
+Les surprises :
+- [2026-10-27 05:26] je cherchais la largeur d'un bouton ; le MeasureWidth + 14 que j'ai trouvé sert à un champ de saisie, pas à un bouton
+- [2026-10-27 05:30] autour des Button(ctx, texte) du Monteur, je m'attendais à voir imposer la taille avant l'appel ; je ne vois que ctx.theme.button sauvé puis remplacé (couleur), pas de SetNextItemRect : la taille de ces boutons reste décidée par la forme automatique
+
+Les questions ouvertes :
+- [2026-10-27 05:26] quelles valeurs de w et h Button(ctx, label) passe à NextItemRect : le corps est cité comme étant dans NkGuiWidgets.cpp, absent du kit
+
+Les mensonges :
+- [2026-10-27 05:28] include/NKGui/Widgets/NkGuiWidgets.h, lignes 4-5 : le commentaire dit « amorce — Button, Panel » et que les labels texte et le reste des widgets arrivent en Phase 3 ; le même fichier déclare 133 fonctions, dont Text et TextWrapped. Preuve : sed -n 4,5p du fichier, puis grep -c NKENTSEU_NKGUI_API
