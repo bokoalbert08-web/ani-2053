@@ -1,0 +1,19 @@
+Situations :
+
+1. Le joueur maintient la flèche droite : PULL, car il faut vérifier l'état de la touche à chaque image pour maintenir le déplacement pendant toute la durée de l'appui. Outil : `NkInput.IsKeyDown(NkKey::NK_RIGHT)` — `NkEventDispatcher.h:273`.
+
+2. Le joueur appuie sur Échap : PUSH, car l'appui est un événement ponctuel et l'application doit être prévenue au moment où il survient. Outil : `OnKeyPress(const NkKeyPressEvent&)` — `NkCanvasApp.h:282`.
+
+3. On veut connaître la position de la souris : PULL, car on demande sa position actuelle au moment où on en a besoin, même si la souris ne bouge pas. Outils : `NkInput.MouseX()` et `NkInput.MouseY()` — `NkEventDispatcher.h:308-310`.
+
+4. Un fichier est déposé sur la fenêtre : PUSH, car le dépôt est un événement ponctuel qui doit prévenir l'application dès qu'il survient. Outil : `NkDropFileEvent` — `NkDropEvent.h:373`.
+
+5. La fenêtre est redimensionnée : PUSH, car le changement de dimensions est un événement ponctuel qui doit être signalé à l'application. Outil : `NkWindowResizeEvent` — `NkWindowEvent.h:453`.
+
+6. Le joueur double-clique : PUSH, car le double-clic est une action ponctuelle détectée par le système et transmise à l'application. Outil : `NkMouseDoubleClickEvent` — `NkMouseEvent.h:684`.
+
+Les deux bogues :
+
+Si on utilise PULL pour détecter l'appui sur Échap et qu'on vérifie la touche à chaque image, l'action peut être exécutée plusieurs fois tant que la touche reste enfoncée. Par exemple, une action peut partir trois fois au lieu d'une seule.
+
+Si on utilise PUSH pour déplacer le joueur qui maintient la flèche droite, un simple événement `NkKeyPressEvent` ne signale que le début de l'appui. Le joueur se déplace une fois, puis son mouvement s'arrête trop tôt au lieu de continuer à chaque image.
