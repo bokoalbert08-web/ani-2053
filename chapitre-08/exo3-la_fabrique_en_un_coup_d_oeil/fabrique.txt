@@ -1,0 +1,5 @@
+Recherche : Depuis Canvas/include/, j'ai exécuté la commande grep -R -n "NkOpenGLRenderer2D" . Le résultat montre 5 fichiers contenant ce nom : le fichier du dorsal OpenGL lui-même et 4 fichiers situés hors de son dossier.
+
+Hors de son dossier : NKCanvas/Renderer/Core/NkIRenderer2D.h:15 — commentaire ; NKCanvas/Renderer/Core/NkRenderer2D.h:19 — commentaire ; NKCanvas/Renderer/Resources/NkTextureBackend.h:22, 24, 25, 26, 27 et 28 — commentaires ; NKGui/Core/NkGuiDrawListRaster.h:35 — commentaire. Toutes ces occurrences sont des commentaires et non des appels de code.
+
+Conclusion : NkRenderer2DFactory.h ne nomme aucun dorsal concret. Il utilise l'interface NkIRenderer2D et reçoit un contexte graphique. L'appelant peut donc demander un renderer sans connaître la classe concrète utilisée. La recherche montre que le nom NkOpenGLRenderer2D apparaît dans quatre autres fichiers, mais uniquement dans des commentaires. Cela indique que le choix du dorsal n'est pas dispersé dans le code de ces fichiers. La fabrique contribue ainsi à séparer l'utilisation du renderer de son implémentation concrète.
