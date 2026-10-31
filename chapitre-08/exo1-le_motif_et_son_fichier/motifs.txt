@@ -1,0 +1,17 @@
+Stratégie : NKAudio/NkAudio.h, ligne 438 : class NKENTSEU_AUDIO_API IAudioEffect {. Cette interface définit une stratégie de traitement audio. Les effets concrets peuvent fournir leur propre implémentation de Process(), déclarée à la ligne 452.
+
+Fabrique : NKAudio/NkAudio.h, ligne 1377 : class NKENTSEU_AUDIO_API AudioBackendFactory {. Cette fabrique centralise la création des backends audio. La méthode Create() apparaît à la ligne 1385.
+
+Façade : NKCanvas/Renderer/Core/NkRenderer2D.h, ligne 58 : class NkRenderer2D {. Cette classe constitue la façade publique qui simplifie l'utilisation du moteur de rendu 2D en déléguant les opérations au backend.
+
+Patron de méthode : NKCanvas/Renderer/Batch/NkBatchRenderer2D.h, ligne 158 : virtual void BeginBackend() {. La classe de base définit des étapes communes du rendu et laisse aux backends les opérations spécifiques. Le second point d'extension est EndBackend(), ligne 162.
+
+Observateur : NKEvent/NkEventSystem.h, ligne 315 : void AddEventCallback(Callback &&callback, NkWindowId windowId = NK_INVALID_WINDOW_ID) {. Cette méthode enregistre un callback pour un type d'événement. Le callback est ensuite appelé lorsque l'événement correspondant est reçu, ligne 350 : callback(typed);.
+
+Singleton : NKAudio/NkAudio.h, ligne 1091 : static AudioEngine &Instance();. Cette méthode donne accès à l'instance unique du moteur audio. Le commentaire de la ligne 1054 indique explicitement le modèle Singleton thread-safe.
+
+Adaptateur : NKMemory/NkStlAdapter.h, ligne 124 : template <typename T, typename AllocatorType> class NkStlAdapter {. Cette classe adapte un allocateur NKMemory aux conventions attendues par les conteneurs de la bibliothèque standard. La délégation de l'allocation est visible à la ligne 192 : void *mem = alloc->Allocate(n * sizeof(T), alignof(T));
+
+Composite : NKLogger/Sinks/NkDistributingSink.h, ligne 487 : NkVector<memory::NkSharedPtr<NkISink>> m_Sinks;. Le distributeur contient une collection de sinks et leur transmet les messages. Le commentaire de la ligne 60 précise explicitement que NkDistributingSink implémente le patron Composite.
+
+Commande : Le patron Commande n'est pas réellement implémenté sous la forme d'un objet encapsulant une action exécutable et son annulation. Le plus proche est NkActionCommand dans NKEvent/NkEventDispatcher.h, ligne 642 : struct NkActionCommand {. Il représente une action associée à une entrée utilisateur, mais ne fournit pas à lui seul le mécanisme complet du patron Commande. Un exemple du patron Commande existe uniquement dans un commentaire de NKContainers/Functional/NkFuntionV2.h, ligne 1490 : * EXEMPLE 6 : Command pattern avec annulation/refaire. La structure Command est également présentée dans ce commentaire à la ligne 1494 ; ce n'est pas une implémentation réelle.
