@@ -1,0 +1,13 @@
+L'endroit :
+- Renderer/Resources/NkShaderBackend.h, lignes 50 à 66 : NkShaderBackend définit une table de callbacks et NkShaderSetBackend() enregistre le backend actif.
+- Renderer/Resources/NkTextureBackend.h, lignes 42 à 55 : NkTextureBackend définit une autre table de callbacks et NkTextureSetBackend() enregistre séparément le backend actif.
+- Renderer/Targets/NkRenderTextureBackend.h, lignes 26 à 36 : NkRenderTextureBackend répète cette organisation pour les render textures.
+- Renderer/Resources/NkShader.h, lignes 134 à 136, et Renderer/Targets/NkRenderTexture.h, lignes 52 à 55 : les ressources dépendent des tables installées par le renderer.
+
+Le motif :
+Le motif Abstract Factory pourrait regrouper la création et la gestion des ressources compatibles avec un même backend graphique. Chaque backend (OpenGL, Vulkan, DirectX, Metal ou Software) fournirait une fabrique concrète capable de gérer les shaders, les textures et les render textures. Le renderer utiliserait cette fabrique au lieu de gérer plusieurs enregistrements indépendants. Les tables de callbacks actuelles constituent déjà une forme de Strategy ; il ne faut donc pas prétendre que ce motif est totalement absent. L'amélioration proposée concerne surtout la centralisation et la cohérence de la famille de ressources.
+
+Le coût :
+- Fichiers à modifier : environ 6 à 10 fichiers, notamment les trois fichiers Nk*Backend.h, les classes de ressources concernées, les renderers et les tests.
+- Risques : régression dans la création ou la destruction des ressources, incompatibilité entre les backends, mauvaise gestion de la durée de vie des ressources et complexité supplémentaire pour les backends qui ne prennent pas encore en charge certaines fonctionnalités.
+- Coût estimé : moyen à élevé. Il faudrait procéder progressivement, backend par backend, et vérifier les opérations de création, d'utilisation et de destruction.
