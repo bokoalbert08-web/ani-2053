@@ -1,0 +1,23 @@
+Tester la version directe :
+La fonction PersonnageSauteDirecte() interroge directement le singleton NkInput. Pour la tester correctement, il faudrait pouvoir simuler les différents états du clavier : espace enfoncée ou relâchée, personnage au sol ou en l'air. Il faudrait donc contrôler le singleton, utiliser une fenêtre et injecter des événements clavier, ou mettre en place un mécanisme de simulation. Cela rend les tests plus difficiles, plus dépendants de l'environnement et moins faciles à automatiser.
+
+La version testable :
+La fonction PersonnageSauteTestable() reçoit deux booléens : estAuSol et espacePresse. Elle conserve exactement la règle du jeu : le personnage saute uniquement lorsqu'il est au sol et que la barre d'espace est enfoncée. Elle ne consulte plus NkInput. On peut donc tester les quatre combinaisons possibles sans fenêtre, sans clavier et sans modifier le singleton.
+
+Le banc :
+En Debug :
+testable : au sol + espace enfoncée : attendu=1 obtenu=1 OK
+testable : au sol + espace relâchée : attendu=0 obtenu=0 OK
+testable : en l'air + espace enfoncée : attendu=0 obtenu=0 OK
+testable : en l'air + espace relâchée : attendu=0 obtenu=0 OK
+directe : au sol, sans fenêtre : attendu=0 obtenu=0 OK
+directe : en l'air, sans fenêtre : attendu=0 obtenu=0 OK
+TOTAL : 0 échec(s)
+Code de sortie : 0
+
+En Release, les six résultats sont également OK.
+TOTAL : 0 échec(s)
+Code de sortie : 0
+
+Sans fenêtre :
+La version directe a rendu false dans les deux cas exécutés. OnCommandLine est appelée avant la création de la fenêtre : aucun événement clavier réel n'a été transmis à NkInput. Le singleton n'a donc signalé aucune pression de la barre d'espace pendant ce test. La version testable, elle, permet de simuler les états du clavier directement avec ses paramètres.
