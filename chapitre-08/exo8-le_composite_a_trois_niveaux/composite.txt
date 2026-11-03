@@ -1,0 +1,46 @@
+La hiérarchie :
+
+La composition comporte trois niveaux :
+- Niveau 1 : root, position (100, 80).
+- Niveau 2 : middle, position (30, 20), rotation de 90 degrés.
+- Niveau 3 : sprite, position locale (10, 5).
+
+Chaque niveau compose la transformation reçue avec sa propre transformation avant de dessiner son enfant :
+local.transform *= GetTransform();
+
+Attendu :
+
+Avant l'exécution, le calcul manuel de la position de l'origine du sprite est :
+
+1. Position locale du sprite : (10, 5).
+2. Après la rotation de 90 degrés du niveau middle : (-5, 10).
+3. Ajout de la position du niveau middle : (30, 20) + (-5, 10) = (25, 30).
+4. Ajout de la position du niveau root : (100, 80) + (25, 30) = (125, 110).
+
+La position attendue de l'origine du sprite dans le monde est donc (125, 110).
+
+Mesuré :
+
+La sonde correcte utilise la transformation composée reçue, puis applique TransformPoint à l'origine (0, 0).
+
+Résultats obtenus :
+- Debug : (125, 110).
+- Release : (125, 110).
+
+Les mesures correspondent au calcul manuel.
+
+Les captures d'écran ont été réalisées avec DirectX 11 à l'image 10 :
+- Debug : capture.png.
+- Release : capture-release.png.
+
+La compilation et l'exécution ont réussi dans les deux configurations.
+
+Le défaut :
+
+La sonde défectueuse ignore les transformations reçues. Elle repart de NkRenderStates::Default() et applique uniquement sa propre transformation.
+
+Résultat mesuré :
+- Debug : (10, 5).
+- Release : (10, 5).
+
+Cette valeur est différente de la position attendue (125, 110). Le test met donc en évidence le défaut : lorsqu'un enfant ne compose pas la transformation reçue avec sa propre transformation, il perd les transformations de ses parents.
