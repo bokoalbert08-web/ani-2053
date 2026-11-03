@@ -1,0 +1,88 @@
+Les crochets :
+
+Les 12 crochets virtuels de NkCanvasApp.h :
+
+- Ligne 249 — OnCommandLine : appelé avant la création de la fenêtre. Une valeur de retour peut arrêter le programme avec un code de sortie.
+- Ligne 255 — OnInit : appelé lorsque la fenêtre et la cible de rendu existent. Retourner false abandonne l'initialisation.
+- Ligne 259 — OnUpdate : appelé pour effectuer la mise à jour de l'application.
+- Ligne 262 — OnRender : appelé pour effectuer le rendu.
+- Ligne 265 — OnShutdown : appelé lors de l'arrêt de l'application.
+- Ligne 270 — OnEvent : reçoit les événements bruts. Retourner true consomme l'événement et arrête sa propagation ; false permet la suite du traitement.
+- Ligne 277 — OnPointer : reçoit les événements unifiés de souris et de tactile. Il est dérivé de OnEvent.
+- Ligne 282 — OnKeyPress : reçoit les événements d'appui sur une touche.
+- Ligne 291 — OnLayout : appelé lorsque la taille, la zone de sécurité ou la densité change. Il intervient au moins une fois avant la première image.
+- Ligne 314 — OnCloseRequested : reçoit une demande de fermeture. Retourner false refuse la fermeture.
+- Ligne 321 — OnPause : appelé lorsque l'application passe en arrière-plan ou perd le focus.
+- Ligne 323 — OnResume : appelé lorsque l'application reprend son activité.
+
+L'ordre mesuré :
+
+Journal Debug (23 appels) :
+
+01 | OnCommandLine | image=0 | Time=0.000
+02 | OnLayout | image=0 | Time=0.000
+03 | OnInit | image=0 | Time=0.000
+04 | OnEvent | image=0 | Time=0.000
+05 | OnEvent | image=0 | Time=0.000
+06 | OnEvent | image=0 | Time=0.000
+07 | OnEvent | image=0 | Time=0.000
+08 | OnEvent | image=0 | Time=0.000
+09 | OnEvent | image=0 | Time=0.000
+10 | OnEvent | image=0 | Time=0.000
+11 | OnEvent | image=0 | Time=0.000
+12 | OnEvent | image=0 | Time=0.000
+13 | OnEvent | image=0 | Time=0.000
+14 | OnEvent | image=0 | Time=0.000
+15 | OnEvent | image=0 | Time=0.000
+16 | OnPointer | image=0 | Time=0.000
+17 | OnUpdate | image=1 | Time=0.000
+18 | OnRender | image=1 | Time=0.000
+19 | OnUpdate | image=2 | Time=0.018
+20 | OnRender | image=2 | Time=0.018
+21 | OnUpdate | image=3 | Time=0.034
+22 | OnRender | image=3 | Time=0.034
+23 | OnShutdown | image=3 | Time=0.034
+
+Journal Release (20 appels) :
+
+01 | OnCommandLine | image=0 | Time=0.000
+02 | OnLayout | image=0 | Time=0.000
+03 | OnInit | image=0 | Time=0.000
+04 | OnEvent | image=0 | Time=0.000
+05 | OnEvent | image=0 | Time=0.000
+06 | OnEvent | image=0 | Time=0.000
+07 | OnEvent | image=0 | Time=0.000
+08 | OnEvent | image=0 | Time=0.000
+09 | OnEvent | image=0 | Time=0.000
+10 | OnEvent | image=0 | Time=0.000
+11 | OnEvent | image=0 | Time=0.000
+12 | OnEvent | image=0 | Time=0.000
+13 | OnEvent | image=0 | Time=0.000
+14 | OnUpdate | image=1 | Time=0.000
+15 | OnRender | image=1 | Time=0.000
+16 | OnUpdate | image=2 | Time=0.017
+17 | OnRender | image=2 | Time=0.017
+18 | OnUpdate | image=3 | Time=0.033
+19 | OnRender | image=3 | Time=0.033
+20 | OnShutdown | image=3 | Time=0.033
+
+Les surprises :
+
+1. OnLayout apparaît avant OnInit dans les deux journaux. Le crochet de disposition intervient donc très tôt, avant la première image et avant l'initialisation personnalisée observée ici.
+
+2. OnEvent est appelé plusieurs fois avant le premier OnUpdate : 12 fois en Debug et 10 fois en Release. La création de la fenêtre et le système de gestion des événements génèrent donc plusieurs événements initiaux, même sans interaction volontaire de l'utilisateur.
+
+3. OnPointer apparaît une fois en Debug, mais pas en Release. Ce crochet dépend des événements de pointeur effectivement reçus. Il ne faut donc pas supposer que tous les crochets liés aux événements seront appelés à chaque exécution.
+
+On remarque également que OnShutdown est appelé après la troisième image, à la suite de Quit(). En revanche, OnKeyPress, OnCloseRequested, OnPause et OnResume ne sont pas apparus pendant ces essais.
+
+Debug et Release :
+
+Les deux configurations ont été compilées et exécutées avec succès.
+
+- Debug : 23 appels enregistrés, dont 12 OnEvent et 1 OnPointer.
+- Release : 20 appels enregistrés, dont 10 OnEvent et aucun OnPointer.
+- Les deux configurations ont exécuté 3 OnUpdate, 3 OnRender et 1 OnShutdown.
+- Le temps mesuré à la troisième image est de 0.034 seconde en Debug et 0.033 seconde en Release.
+
+Les deux exécutions présentent le même ordre général de démarrage, de mise à jour, de rendu et d'arrêt. Les différences concernent principalement les événements initiaux. Elles montrent que les événements système observés peuvent varier entre deux exécutions et deux configurations.
