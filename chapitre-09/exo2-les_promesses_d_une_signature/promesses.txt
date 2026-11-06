@@ -1,0 +1,5 @@
+methode : PixelToWorld, promesses : 3
+methode : GridSpacing, promesses : 1
+methode : PanByPixels, promesses : 0
+methode : HalfSize, promesses : 2
+methode : HitTest, promesses : 2

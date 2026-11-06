@@ -1,0 +1,19 @@
+La promesse la plus forte :
+
+La promesse la plus forte est le const placé après les parenthèses d'une méthode. Il garantit que cette méthode ne modifie pas l'état observable de l'objet. Par exemple, PixelToWorld et GridSpacing peuvent être appelées sur un objet constant. En revanche, PanByPixels modifie center et ne peut donc pas être appelée sur un objet constant.
+
+Le message du compilateur :
+
+En activant l'appel vue.PanByPixels(1.0f, 0.0f) dans test_const.cpp, le compilateur a produit le message suivant :
+
+test_const.cpp:13:5: error: 'this' argument to member function 'PanByPixels' has type 'const nkref::NkRefView', but function is not marked const
+   13 |     vue.PanByPixels(1.0f, 0.0f);
+      |     ^~~
+NkRefView.h:45:9: note: 'PanByPixels' declared here
+   45 |         void PanByPixels(float32 dxPixels, float32 dyPixels) {
+
+Ce message confirme qu'une méthode non const ne peut pas être appelée sur un objet constant.
+
+Une promesse que la signature ne dit pas :
+
+La signature de PixelToWorld ne garantit pas que zoom soit différent de zéro. Pourtant, le corps de la méthode divise les coordonnées par zoom. Si zoom vaut zéro, le calcul peut produire un résultat incorrect ou infini. La signature ne garantit donc pas à elle seule la validité du calcul.
