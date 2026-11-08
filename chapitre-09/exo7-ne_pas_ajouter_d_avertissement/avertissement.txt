@@ -1,0 +1,10 @@
+Avertissement observé dans le journal de compilation :
+
+Fichier : Sandbox/System/NKReflection/src/main.cpp
+Ligne : 22
+Colonne : 9
+
+warning: 'offsetof' on non-standard-layout type 'SelfType'
+(aka 'DemoObject') [-Winvalid offsetof]
+
+Note : avertissement préexistant, non provoqué par une variable ajoutée pour cet exercice.

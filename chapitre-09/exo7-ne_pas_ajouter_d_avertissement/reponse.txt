@@ -1,0 +1,8 @@
+Comment j'ai compté :
+J'ai relevé les avertissements du journal de compilation avec grep en recherchant les lignes contenant « warning: ». Le journal indique 69 avertissements. La compilation étant interrompue après 51 projets sur 226, ce nombre est partiel.
+
+Où était le mien :
+Un avertissement observé se trouve dans Sandbox/System/NKReflection/src/main.cpp, à la ligne 22, colonne 9. Il concerne l'utilisation de offsetof sur un type qui n'est pas standard-layout. Cet avertissement était déjà présent dans le code.
+
+Ce que coûte la vérification :
+La durée mesurée depuis le démarrage du chronomètre est de 1 h 46 min 57 s. La compilation complète n'a pas abouti : NkRHIDemoFull a échoué après 51 projets compilés sur 226. La mesure après modification n'a pas été effectuée.

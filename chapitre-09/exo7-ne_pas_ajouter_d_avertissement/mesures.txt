@@ -1,0 +1,11 @@
+Compilation avant :
+Projets compilés : 51 / 226
+Projets échoués : 1 (NkRHIDemoFull)
+Projets non atteints : 174
+Avertissements relevés : 69
+
+Compilation après :
+Non mesurée : la seconde compilation complète n'a pas été réalisée.
+
+Durée totale mesurée : 1 h 46 min 57 s
+Statut : compilation partielle, échec.
