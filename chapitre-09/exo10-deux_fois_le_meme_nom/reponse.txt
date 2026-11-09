@@ -1,0 +1,8 @@
+Le premier mérite-t-il le nom :
+Oui. Le NkTransform de NKCanvas représente une transformation affine 2D basée sur une matrice 4x4. Il permet notamment les opérations de translation, rotation, mise à l'échelle et transformation de points.
+
+Le second mérite-t-il le nom :
+Oui. Le NkTransform de NKRenderer représente une transformation locale TRS composée d'une translation, d'une rotation quaternion et d'une échelle. Il sert à gérer les transformations locales des objets de la scène.
+
+Le renommage le moins cher :
+Il est préférable de renommer le NkTransform de NKRenderer en NkLocalTransform. Dans les sources étudiées, le nom apparaît sur 8 lignes réparties dans 3 fichiers pour NKRenderer, contre 43 lignes dans 8 fichiers pour NKCanvas. Ce choix limite donc le nombre de modifications.

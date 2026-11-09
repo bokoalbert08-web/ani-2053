@@ -1,0 +1,2 @@
+name : NkTransform, file : Kernel/Runtime/NKCanvas/src/NKCanvas/Renderer/Core/NkTransform.h, line : 47
+name : NkTransform, file : Kernel/Runtime/NKRenderer/src/NKRenderer/Core/NkITransformable.h, line : 24
