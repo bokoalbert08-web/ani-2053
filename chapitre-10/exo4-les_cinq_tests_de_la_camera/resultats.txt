@@ -1,0 +1,13 @@
+Camera juste :
+TEST aller_retour : OK
+TEST point_fixe : OK
+TEST bornes : OK
+TEST grille : OK
+TEST origine : OK
+
+Camera cassee :
+TEST aller_retour : OK
+TEST point_fixe : ECHEC
+TEST bornes : OK
+TEST grille : OK
+TEST origine : OK
