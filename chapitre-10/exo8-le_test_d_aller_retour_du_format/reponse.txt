@@ -1,0 +1,8 @@
+La ligne que j'ai changée :
+Dans NkRefSerialize, j'ai remplacé l'écriture de it.pos.x par it.pos.x + 1.0f. Le désérialiseur continue à lire cette valeur comme pos.x.
+
+Ce que le test a vu :
+La lecture a réussi, mais lors de la deuxième sérialisation, une unité supplémentaire a été ajoutée à pos.x. Les octets obtenus sont donc différents de ceux du premier fichier.
+
+Ce que le test ne voit pas :
+Le champ selected (ainsi que active) n'est pas enregistré dans le format. Sa valeur peut être perdue pendant la lecture sans que ce test le détecte. De plus, une erreur symétrique dans la sérialisation et la désérialisation, comme inverser pos.x et pos.y dans les deux opérations, peut passer inaperçue.
