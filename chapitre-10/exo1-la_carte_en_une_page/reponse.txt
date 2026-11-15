@@ -1,0 +1,8 @@
+Ce que possède chaque fichier :
+NkRefView.h contient la caméra 2D et ses opérations de déplacement, de zoom et de conversion entre les coordonnées du monde et celles de l'écran. NkRefBoard.h contient le modèle de la planche : les images, les annotations, leur géométrie et leur sélection. NkRefFile.h gère la sérialisation et la désérialisation de la planche dans le format binaire .nkref. Enfin, main.cpp assure la liaison avec la fenêtre, les événements, le rendu et l'interface graphique.
+
+La part des fichiers purs :
+NkRefView.h, NkRefBoard.h et NkRefFile.h sont purs au sens de l'exercice, car ils ne dépendent ni d'une fenêtre ni d'un système de rendu. Ils totalisent 681 lignes sur 2658, soit environ 25,6 % des lignes, ce qui représente environ un quart du code.
+
+Les deux fichiers que je garderais :
+Je garderais NkRefView.h et NkRefBoard.h. Le premier contient la logique de la caméra 2D et le second le modèle central de la planche. Ils sont réutilisables indépendamment de l'interface graphique. NkRefFile.h reste utile pour sauvegarder et charger les données, mais il dépend directement des deux autres.
