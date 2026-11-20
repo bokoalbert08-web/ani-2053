@@ -1,0 +1,48 @@
+Commit du moteur au début de l'enquête :
+9c3fad3
+
+Investigation préalable : GetFlipX
+
+Commande :
+git grep -n GetFlipX -- Kernel
+
+Résultat :
+Kernel/Runtime/NKCanvas/src/NKCanvas/Renderer/Batch/NkBatchRenderer2D.cpp:479: if (sprite.GetFlipX()) {
+Kernel/Runtime/NKCanvas/src/NKCanvas/Renderer/Resources/NkSprite.cpp:51: bool NkSprite::GetFlipX() const {
+Kernel/Runtime/NKCanvas/src/NKCanvas/Renderer/Resources/NkSprite.h:82: bool GetFlipX() const;
+
+Lecteur trouvé :
+Kernel/Runtime/NKCanvas/src/NKCanvas/Renderer/Batch/NkBatchRenderer2D.cpp:479
+
+Membre 1 : NkRefItem::sourcePath
+
+Commande :
+git grep -nE 'AddItem|sourcePath|\.id\b|->id\b' -- Applications/NkRef
+
+Résultat :
+Applications/NkRef/src/NkRef/NkRefBoard.h:44: NkString sourcePath;
+Applications/NkRef/src/NkRef/NkRefBoard.h:65: uint32 AddItem(const NkVec2f &worldPos, uint32 texW, uint32 texH, const NkString &sourcePath)
+Applications/NkRef/src/NkRef/NkRefBoard.h:67: it.id = mNextId++;
+Applications/NkRef/src/NkRef/NkRefBoard.h:71: it.sourcePath = sourcePath;
+Applications/NkRef/src/NkRef/NkRefBoard.h:73: return it.id;
+Applications/NkRef/src/NkRef/main.cpp:624: board.AddItem(world, w, h, NkString(path));
+Applications/NkRef/src/NkRef/main.cpp:666: board.AddItem(world, clip.width, clip.height, NkString());
+
+Commande de vérification ciblée :
+git grep -n 'sourcePath' -- Applications/NkRef
+
+Résultat :
+Applications/NkRef/src/NkRef/NkRefBoard.h:44: NkString sourcePath;
+Applications/NkRef/src/NkRef/NkRefBoard.h:71: it.sourcePath = sourcePath;
+
+Membre 2 : NkAgent::mTotalReplayed
+
+Commande :
+git grep -n 'mTotalReplayed' -- Kernel
+
+Résultat :
+Kernel/AI/NKAgent/src/NKAgent/NkAgent.cpp:45: mTotalReplayed(0),
+Kernel/AI/NKAgent/src/NKAgent/NkAgent.cpp:60: mTotalReplayed(0),
+Kernel/AI/NKAgent/src/NKAgent/NkAgent.cpp:83: mTotalReplayed += batchSize;
+Kernel/AI/NKAgent/src/NKAgent/NkAgent.h:108: return mTotalReplayed;
+Kernel/AI/NKAgent/src/NKAgent/NkAgent.h:200: uint64 mTotalReplayed;

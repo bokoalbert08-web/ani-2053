@@ -1,0 +1,18 @@
+Membre : NkRefItem::sourcePath
+Écrit dans : Applications/NkRef/src/NkRef/NkRefBoard.h:71
+Lu par : personne dans le code de NkRef
+Verdict : inutile
+
+Preuve :
+La recherche ciblée de sourcePath dans Applications/NkRef ne montre que sa déclaration et son affectation. Aucune lecture de cette valeur n'apparaît dans ce module. Le chemin est donc conservé dans chaque élément sans être exploité.
+
+Membre : NkAgent::mTotalReplayed
+Écrit dans : Kernel/AI/NKAgent/src/NKAgent/NkAgent.cpp:83
+Lu par : Kernel/AI/NKAgent/src/NKAgent/NkAgent.h:108
+Verdict : membre utilisé, candidat rejeté
+
+Preuve :
+La valeur est incrémentée avec mTotalReplayed += batchSize, puis renvoyée par le getter return mTotalReplayed. Il serait donc incorrect de la déclarer inutilisée.
+
+Ce que la lecture seule n'aurait pas montré :
+La recherche des lectures seule ne suffit pas toujours à établir qu'un membre est inutile. Il faut aussi examiner les écritures, les getters et les appels qui utilisent leurs résultats. Dans cette enquête, sourcePath est bien affecté sans être relu dans NkRef, tandis que mTotalReplayed possède un lecteur explicite.
