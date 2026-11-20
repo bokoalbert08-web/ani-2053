@@ -1,0 +1,11 @@
+Cinquante :
+
+images : 50, octets : 51832, ecrire : 0.242250 ms, relire : 0.168035 ms
+images : 50, octets : 51832, ecrire : 0.255475 ms, relire : 0.185345 ms
+images : 50, octets : 51832, ecrire : 0.237605 ms, relire : 0.220690 ms
+
+Deux cents :
+
+images : 200, octets : 207232, ecrire : 0.941380 ms, relire : 0.771885 ms
+images : 200, octets : 207232, ecrire : 1.048185 ms, relire : 0.761765 ms
+images : 200, octets : 207232, ecrire : 1.034920 ms, relire : 0.785240 ms

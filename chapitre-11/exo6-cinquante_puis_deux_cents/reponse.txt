@@ -1,0 +1,11 @@
+Le protocole :
+J'ai construit un NkRefBoard contenant 50 images, puis 200 images. Chaque image mesure 100 x 80 pixels et utilise une source fictive de 1000 octets. Les positions sont différentes, la vue est celle par défaut et aucun trait n'est ajouté. Pour chaque taille, j'ai effectué trois mesures. Chaque mesure correspond à 20 appels successifs à NkRefSerialize, puis à 20 appels à NkRefDeserialize sur les données sérialisées. J'ai divisé chaque durée totale par 20. Le programme a été compilé en configuration Debug, sans optimisation (-O0).
+
+L'écart entre mes trois mesures :
+Pour 50 images, l'écart entre la mesure la plus lente et la plus rapide est de 0,017870 ms en écriture et de 0,052655 ms en lecture. Pour 200 images, il est de 0,106805 ms en écriture et de 0,023475 ms en lecture. Les petites variations peuvent venir de l'activité de la machine, de l'ordonnancement du système et des allocations mémoire. Les mesures ne sont donc pas parfaitement constantes.
+
+Ce que coûtent quatre fois plus d'images :
+La taille sérialisée passe de 51 832 à 207 232 octets, exactement quatre fois plus. Le temps moyen d'écriture passe de 0,245110 à 1,008162 ms, soit environ 4,11 fois plus. Le temps moyen de lecture passe de 0,191357 à 0,772963 ms, soit environ 4,04 fois plus. Dans cet essai, les temps augmentent donc presque proportionnellement au nombre d'images.
+
+Ce qui deviendrait limitant en premier :
+Dans ce test, le coût mesuré concerne surtout la sérialisation, la désérialisation, les copies de données et les allocations mémoire. Si le nombre d'images continuait à augmenter, le temps de traitement et la mémoire nécessaire aux données sérialisées pourraient devenir limitants. Dans une application réelle, le chargement des fichiers, le décodage des images, la mémoire des textures et leur transfert vers le GPU pourraient aussi devenir des limites importantes. Ces dernières pistes sont des hypothèses : elles n'ont pas été mesurées dans ce test.
