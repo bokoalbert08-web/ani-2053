@@ -1,0 +1,5 @@
+La ligne refusée : apercu-3d
+
+Ma défense : Je comprends que tu souhaites voir tes planches d'images en trois dimensions avant de les utiliser. Cependant, cette fonction demanderait beaucoup de travail alors qu'elle ne répond pas au besoin principal de créer et d'organiser rapidement des planches. Je préfère donc consacrer notre temps aux fonctions qui aideront directement les utilisateurs dans leur travail quotidien.
+
+Ce que je propose à la place : Je propose un aperçu en deux dimensions plus pratique, avec la possibilité de zoomer et de sélectionner plusieurs éléments facilement. Ainsi, l'utilisateur pourra vérifier et organiser ses images sans attendre le développement d'une fonction trois dimensions.

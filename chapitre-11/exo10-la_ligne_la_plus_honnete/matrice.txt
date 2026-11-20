@@ -1,0 +1,9 @@
+8
+raccourcis-zoom 5 1 SUPPOSEE MANQUE
+selection-multiple 4 2 SUPPOSEE MANQUE
+alignement-automatique 3 2 SUPPOSEE MANQUE
+export-png 5 3 SUPPOSEE MANQUE
+sauvegarde-projet 4 4 SUPPOSEE MANQUE
+gestion-identifiants 2 2 SUPPOSEE SOCLE selection-multiple
+apercu-3d 2 5 SUPPOSEE MANQUE
+themes-personnalises 2 2 SUPPOSEE MANQUE

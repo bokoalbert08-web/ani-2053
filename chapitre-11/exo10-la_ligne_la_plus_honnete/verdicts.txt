@@ -1,0 +1,9 @@
+MAINTENANT raccourcis-zoom SUPPOSEE
+MAINTENANT selection-multiple SUPPOSEE
+MAINTENANT gestion-identifiants SUPPOSEE
+MAINTENANT alignement-automatique SUPPOSEE
+DECOUPER export-png SUPPOSEE
+DECOUPER sauvegarde-projet SUPPOSEE
+EN_PASSANT themes-personnalises SUPPOSEE
+ON_NE_LE_FAIT_PAS apercu-3d SUPPOSEE
+VERDICT HONNETE
